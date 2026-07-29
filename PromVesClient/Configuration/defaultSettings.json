@@ -2,10 +2,10 @@
   "SerialPort": {
     "Id": 1,
     "PortName": "",
-    "BaudRate": 115200,
+    "BaudRate": 9600,
     "DataBits": 8,
-    "Parity": "None",
-    "StopBits": "None",
+    "Parity": "Even",
+    "StopBits": "One",
     "Handshake": "None"
   }
 }
