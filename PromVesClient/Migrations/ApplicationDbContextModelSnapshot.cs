@@ -76,41 +76,41 @@ namespace PromVesClient.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<double>("DifferenceCarts")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("DifferenceCarts")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("DifferenceSides")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("DifferenceSides")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("FirstCart")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("FirstCart")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("GrossWeight")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("GrossWeight")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("LeftSide")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("LeftSide")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("LoadCapacity")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("LoadCapacity")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("LoadDeviation")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("LoadDeviation")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("NetWeight")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("NetWeight")
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("ReceiptId")
                         .HasColumnType("uuid");
 
-                    b.Property<double>("RightSide")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("RightSide")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("SecondCart")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("SecondCart")
+                        .HasColumnType("numeric");
 
-                    b.Property<double>("TareWeight")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("TareWeight")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("TypeWeighing")
                         .IsRequired()
