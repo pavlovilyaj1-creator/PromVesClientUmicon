@@ -76,7 +76,13 @@ namespace PromVesClient.Service.TcpService
 
                 while (!token.IsCancellationRequested)
                 {
-                    int count = await _stream.ReadAsync(buffer, token);
+                    //создание токена отмены с задержкой 10 секунд
+                    using var timeoutCts =
+                    CancellationTokenSource.CreateLinkedTokenSource(token);
+                     timeoutCts.CancelAfter(TimeSpan.FromSeconds(10));
+
+                    int count =
+                        await _stream.ReadAsync(buffer, timeoutCts.Token);
 
                     if (count == 0)
                         break;
@@ -112,7 +118,10 @@ namespace PromVesClient.Service.TcpService
             }
             catch (OperationCanceledException)
             {
-                return;
+                if (token.IsCancellationRequested)
+                    return; // приложение закрывается
+                _logger.LogError("Нет данных от сервера более 10 секунд.");
+                //throw new TimeoutException("Нет данных от сервера более 10 секунд.");
             }
             catch (Exception ex)
             {

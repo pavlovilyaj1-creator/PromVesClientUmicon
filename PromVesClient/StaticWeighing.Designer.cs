@@ -38,7 +38,6 @@
             label1 = new Label();
             pictureBoxStabilityFalse = new PictureBox();
             pictureBoxStabilityTrue = new PictureBox();
-            label2 = new Label();
             lblPlatform1Left = new Label();
             lblPlatform2Left = new Label();
             lblPlatform1Right = new Label();
@@ -53,6 +52,8 @@
             formsPlot2 = new ScottPlot.WinForms.FormsPlot();
             formsPlot3 = new ScottPlot.WinForms.FormsPlot();
             formsPlot4 = new ScottPlot.WinForms.FormsPlot();
+            label2 = new Label();
+            taraWeighingBox = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
@@ -65,7 +66,7 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.Location = new Point(1091, 36);
+            pictureBox1.Location = new Point(946, 16);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(63, 100);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
@@ -75,7 +76,7 @@
             // 
             // pictureBox2
             // 
-            pictureBox2.Location = new Point(1150, 36);
+            pictureBox2.Location = new Point(1005, 16);
             pictureBox2.Name = "pictureBox2";
             pictureBox2.Size = new Size(63, 100);
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
@@ -84,7 +85,7 @@
             // 
             // pictureBox3
             // 
-            pictureBox3.Location = new Point(1210, 36);
+            pictureBox3.Location = new Point(1065, 16);
             pictureBox3.Name = "pictureBox3";
             pictureBox3.Size = new Size(63, 100);
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
@@ -93,7 +94,7 @@
             // 
             // pictureBox4
             // 
-            pictureBox4.Location = new Point(1270, 36);
+            pictureBox4.Location = new Point(1125, 16);
             pictureBox4.Name = "pictureBox4";
             pictureBox4.Size = new Size(63, 100);
             pictureBox4.SizeMode = PictureBoxSizeMode.Zoom;
@@ -102,7 +103,7 @@
             // 
             // pictureBox5
             // 
-            pictureBox5.Location = new Point(1330, 36);
+            pictureBox5.Location = new Point(1185, 16);
             pictureBox5.Name = "pictureBox5";
             pictureBox5.Size = new Size(63, 100);
             pictureBox5.SizeMode = PictureBoxSizeMode.Zoom;
@@ -111,7 +112,7 @@
             // 
             // pictureBox6
             // 
-            pictureBox6.Location = new Point(1390, 36);
+            pictureBox6.Location = new Point(1245, 16);
             pictureBox6.Name = "pictureBox6";
             pictureBox6.Size = new Size(63, 100);
             pictureBox6.SizeMode = PictureBoxSizeMode.Zoom;
@@ -123,7 +124,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label1.Location = new Point(929, 36);
+            label1.Location = new Point(806, 16);
             label1.Name = "label1";
             label1.Size = new Size(109, 21);
             label1.TabIndex = 6;
@@ -133,7 +134,7 @@
             // pictureBoxStabilityFalse
             // 
             pictureBoxStabilityFalse.Image = (Image)resources.GetObject("pictureBoxStabilityFalse.Image");
-            pictureBoxStabilityFalse.Location = new Point(888, 36);
+            pictureBoxStabilityFalse.Location = new Point(765, 16);
             pictureBoxStabilityFalse.Name = "pictureBoxStabilityFalse";
             pictureBoxStabilityFalse.Size = new Size(35, 25);
             pictureBoxStabilityFalse.SizeMode = PictureBoxSizeMode.Zoom;
@@ -143,29 +144,18 @@
             // pictureBoxStabilityTrue
             // 
             pictureBoxStabilityTrue.Image = (Image)resources.GetObject("pictureBoxStabilityTrue.Image");
-            pictureBoxStabilityTrue.Location = new Point(888, 36);
+            pictureBoxStabilityTrue.Location = new Point(765, 16);
             pictureBoxStabilityTrue.Name = "pictureBoxStabilityTrue";
             pictureBoxStabilityTrue.Size = new Size(35, 25);
             pictureBoxStabilityTrue.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBoxStabilityTrue.TabIndex = 8;
             pictureBoxStabilityTrue.TabStop = false;
             // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label2.Location = new Point(910, 86);
-            label2.Name = "label2";
-            label2.Size = new Size(109, 21);
-            label2.TabIndex = 9;
-            label2.Text = "Стабильность";
-            label2.Click += label2_Click;
-            // 
             // lblPlatform1Left
             // 
             lblPlatform1Left.AutoSize = true;
             lblPlatform1Left.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            lblPlatform1Left.Location = new Point(74, 419);
+            lblPlatform1Left.Location = new Point(44, 313);
             lblPlatform1Left.Name = "lblPlatform1Left";
             lblPlatform1Left.Size = new Size(24, 30);
             lblPlatform1Left.TabIndex = 14;
@@ -175,7 +165,7 @@
             // 
             lblPlatform2Left.AutoSize = true;
             lblPlatform2Left.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            lblPlatform2Left.Location = new Point(74, 745);
+            lblPlatform2Left.Location = new Point(44, 609);
             lblPlatform2Left.Name = "lblPlatform2Left";
             lblPlatform2Left.Size = new Size(24, 30);
             lblPlatform2Left.TabIndex = 15;
@@ -185,7 +175,7 @@
             // 
             lblPlatform1Right.AutoSize = true;
             lblPlatform1Right.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            lblPlatform1Right.Location = new Point(633, 419);
+            lblPlatform1Right.Location = new Point(523, 313);
             lblPlatform1Right.Name = "lblPlatform1Right";
             lblPlatform1Right.Size = new Size(24, 30);
             lblPlatform1Right.TabIndex = 16;
@@ -195,7 +185,7 @@
             // 
             lblPlatform2Right.AutoSize = true;
             lblPlatform2Right.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            lblPlatform2Right.Location = new Point(633, 745);
+            lblPlatform2Right.Location = new Point(523, 609);
             lblPlatform2Right.Name = "lblPlatform2Right";
             lblPlatform2Right.Size = new Size(24, 30);
             lblPlatform2Right.TabIndex = 17;
@@ -205,7 +195,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label3.Location = new Point(1091, 166);
+            label3.Location = new Point(946, 150);
             label3.Name = "label3";
             label3.Size = new Size(110, 21);
             label3.TabIndex = 18;
@@ -216,7 +206,7 @@
             // 
             comboBoxVagonNumber.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             comboBoxVagonNumber.FormattingEnabled = true;
-            comboBoxVagonNumber.Location = new Point(1232, 168);
+            comboBoxVagonNumber.Location = new Point(1087, 152);
             comboBoxVagonNumber.Name = "comboBoxVagonNumber";
             comboBoxVagonNumber.Size = new Size(142, 25);
             comboBoxVagonNumber.TabIndex = 19;
@@ -225,7 +215,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label4.Location = new Point(1091, 199);
+            label4.Location = new Point(946, 183);
             label4.Name = "label4";
             label4.Size = new Size(135, 21);
             label4.TabIndex = 20;
@@ -237,7 +227,7 @@
             cBoxTypeWeighing.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             cBoxTypeWeighing.FormattingEnabled = true;
             cBoxTypeWeighing.Items.AddRange(new object[] { "Тара", "Брутто" });
-            cBoxTypeWeighing.Location = new Point(1232, 201);
+            cBoxTypeWeighing.Location = new Point(1087, 185);
             cBoxTypeWeighing.Name = "cBoxTypeWeighing";
             cBoxTypeWeighing.Size = new Size(142, 25);
             cBoxTypeWeighing.TabIndex = 21;
@@ -247,7 +237,7 @@
             // 
             btnSaveWeight.Enabled = false;
             btnSaveWeight.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            btnSaveWeight.Location = new Point(1091, 234);
+            btnSaveWeight.Location = new Point(946, 245);
             btnSaveWeight.Name = "btnSaveWeight";
             btnSaveWeight.Size = new Size(283, 28);
             btnSaveWeight.TabIndex = 22;
@@ -258,7 +248,7 @@
             // btnWeighing
             // 
             btnWeighing.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            btnWeighing.Location = new Point(326, 29);
+            btnWeighing.Location = new Point(321, 12);
             btnWeighing.Name = "btnWeighing";
             btnWeighing.Size = new Size(321, 32);
             btnWeighing.TabIndex = 23;
@@ -268,37 +258,56 @@
             // 
             // formsPlot1
             // 
-            formsPlot1.Location = new Point(28, 115);
+            formsPlot1.Location = new Point(-2, 50);
             formsPlot1.Name = "formsPlot1";
-            formsPlot1.Size = new Size(452, 301);
+            formsPlot1.Size = new Size(452, 260);
             formsPlot1.TabIndex = 24;
             // 
             // formsPlot2
             // 
-            formsPlot2.Location = new Point(586, 115);
+            formsPlot2.Location = new Point(476, 50);
             formsPlot2.Name = "formsPlot2";
-            formsPlot2.Size = new Size(452, 301);
+            formsPlot2.Size = new Size(452, 260);
             formsPlot2.TabIndex = 25;
             // 
             // formsPlot3
             // 
-            formsPlot3.Location = new Point(28, 452);
+            formsPlot3.Location = new Point(-2, 346);
             formsPlot3.Name = "formsPlot3";
-            formsPlot3.Size = new Size(452, 301);
+            formsPlot3.Size = new Size(452, 260);
             formsPlot3.TabIndex = 26;
             // 
             // formsPlot4
             // 
-            formsPlot4.Location = new Point(586, 452);
+            formsPlot4.Location = new Point(476, 346);
             formsPlot4.Name = "formsPlot4";
-            formsPlot4.Size = new Size(452, 301);
+            formsPlot4.Size = new Size(452, 260);
             formsPlot4.TabIndex = 27;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label2.Location = new Point(946, 213);
+            label2.Name = "label2";
+            label2.Size = new Size(43, 21);
+            label2.TabIndex = 28;
+            label2.Text = "Тара";
+            // 
+            // taraWeighingBox
+            // 
+            taraWeighingBox.Location = new Point(1087, 215);
+            taraWeighingBox.Name = "taraWeighingBox";
+            taraWeighingBox.Size = new Size(142, 23);
+            taraWeighingBox.TabIndex = 29;
             // 
             // StaticWeighing
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1486, 801);
+            ClientSize = new Size(1338, 665);
+            Controls.Add(taraWeighingBox);
+            Controls.Add(label2);
             Controls.Add(formsPlot4);
             Controls.Add(formsPlot3);
             Controls.Add(formsPlot2);
@@ -313,7 +322,6 @@
             Controls.Add(lblPlatform1Right);
             Controls.Add(lblPlatform2Left);
             Controls.Add(lblPlatform1Left);
-            Controls.Add(label2);
             Controls.Add(pictureBoxStabilityFalse);
             Controls.Add(label1);
             Controls.Add(pictureBox4);
@@ -350,7 +358,6 @@
         private Label label1;
         private PictureBox pictureBoxStabilityFalse;
         private PictureBox pictureBoxStabilityTrue;
-        private Label label2;
         private Label lblPlatform1Left;
         private Label lblPlatform2Left;
         private Label lblPlatform1Right;
@@ -365,5 +372,7 @@
         private ScottPlot.WinForms.FormsPlot formsPlot2;
         private ScottPlot.WinForms.FormsPlot formsPlot3;
         private ScottPlot.WinForms.FormsPlot formsPlot4;
+        private Label label2;
+        private TextBox taraWeighingBox;
     }
 }

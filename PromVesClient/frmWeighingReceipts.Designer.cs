@@ -55,7 +55,7 @@
             // btnReportFilter
             // 
             btnReportFilter.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            btnReportFilter.Location = new Point(1132, 333);
+            btnReportFilter.Location = new Point(1010, 333);
             btnReportFilter.Name = "btnReportFilter";
             btnReportFilter.Size = new Size(321, 36);
             btnReportFilter.TabIndex = 0;
@@ -71,7 +71,7 @@
             dataGridViewReceipts.Location = new Point(12, 12);
             dataGridViewReceipts.Name = "dataGridViewReceipts";
             dataGridViewReceipts.ReadOnly = true;
-            dataGridViewReceipts.Size = new Size(1097, 294);
+            dataGridViewReceipts.Size = new Size(975, 294);
             dataGridViewReceipts.TabIndex = 1;
             dataGridViewReceipts.CellClick += dataGridViewReceipts_CellClick;
             dataGridViewReceipts.CellContentClick += dataGridViewReceipts_CellContentClick;
@@ -86,7 +86,7 @@
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(dateTimePicker1);
-            groupBox1.Location = new Point(1132, 12);
+            groupBox1.Location = new Point(1010, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(321, 305);
             groupBox1.TabIndex = 2;
@@ -170,13 +170,13 @@
             dataGridViewСards.Location = new Point(12, 365);
             dataGridViewСards.Name = "dataGridViewСards";
             dataGridViewСards.ReadOnly = true;
-            dataGridViewСards.Size = new Size(1097, 417);
+            dataGridViewСards.Size = new Size(975, 317);
             dataGridViewСards.TabIndex = 3;
             // 
             // btnResetFilter
             // 
             btnResetFilter.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            btnResetFilter.Location = new Point(1132, 375);
+            btnResetFilter.Location = new Point(1010, 375);
             btnResetFilter.Name = "btnResetFilter";
             btnResetFilter.Size = new Size(321, 36);
             btnResetFilter.TabIndex = 4;
@@ -187,7 +187,7 @@
             // btnSaveReceipt
             // 
             btnSaveReceipt.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            btnSaveReceipt.Location = new Point(1132, 417);
+            btnSaveReceipt.Location = new Point(1010, 417);
             btnSaveReceipt.Name = "btnSaveReceipt";
             btnSaveReceipt.Size = new Size(321, 36);
             btnSaveReceipt.TabIndex = 5;
@@ -200,7 +200,7 @@
             btnDeleteCard.BackColor = Color.Red;
             btnDeleteCard.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             btnDeleteCard.ForeColor = SystemColors.ControlLightLight;
-            btnDeleteCard.Location = new Point(1132, 501);
+            btnDeleteCard.Location = new Point(1010, 501);
             btnDeleteCard.Name = "btnDeleteCard";
             btnDeleteCard.Size = new Size(321, 36);
             btnDeleteCard.TabIndex = 6;
@@ -213,7 +213,7 @@
             btnDeleteReceipt.BackColor = Color.Red;
             btnDeleteReceipt.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             btnDeleteReceipt.ForeColor = SystemColors.ControlLightLight;
-            btnDeleteReceipt.Location = new Point(1132, 543);
+            btnDeleteReceipt.Location = new Point(1010, 543);
             btnDeleteReceipt.Name = "btnDeleteReceipt";
             btnDeleteReceipt.Size = new Size(321, 36);
             btnDeleteReceipt.TabIndex = 7;
@@ -234,7 +234,7 @@
             // btnPrintReceipt
             // 
             btnPrintReceipt.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            btnPrintReceipt.Location = new Point(1132, 459);
+            btnPrintReceipt.Location = new Point(1010, 459);
             btnPrintReceipt.Name = "btnPrintReceipt";
             btnPrintReceipt.Size = new Size(321, 36);
             btnPrintReceipt.TabIndex = 10;
@@ -246,7 +246,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1518, 909);
+            ClientSize = new Size(1365, 717);
             Controls.Add(btnPrintReceipt);
             Controls.Add(receiptInfoLabel);
             Controls.Add(btnDeleteReceipt);

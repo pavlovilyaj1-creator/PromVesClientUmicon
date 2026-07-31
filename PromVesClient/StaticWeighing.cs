@@ -3,6 +3,7 @@ using PromVesClient.DTO;
 using PromVesClient.Service;
 using PromVesClient.Service.StaticWeighingService;
 using PromVesClient.Service.TcpService;
+using ScottPlot.Colormaps;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
@@ -66,6 +67,8 @@ namespace PromVesClient
             _currentUserService = currentUserService;
             _tcpService = tcpService;
             InitializeComponent();
+            //подгрузка данных номера вагона
+            this.Load += Form_Load;
             //регистрации метода на ожидание новых данных
             _tcpService.MessageReceived += ProcessMessage;
             //регистрация метода на ожидание ошибок
@@ -274,20 +277,45 @@ namespace PromVesClient
         //}
 
         //событие ошибки
-        private void OnConnectionError(Exception ex)
+        private async void OnConnectionError(Exception ex)
         {
             BeginInvoke(() =>
             {
                 graphTimer.Stop();
-                btnSaveWeight.Enabled = false;
-                btnWeighing.Text = "Начать взвешивание";
+                //btnSaveWeight.Enabled = false;
+                //btnWeighing.Text = "Начать взвешивание";
 
                 MessageBox.Show(
-                    ex.Message,
+                    ex.Message+". Пытаемся переподключиться",
                     "Ошибка",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             });
+            //переподключение к серверу
+            while (true)
+            {
+                try
+                {
+                    await _tcpService.DisconnectAsync();
+
+                    await Task.Delay(5000);
+
+                    await _tcpService.ConnectAsync();
+
+                    BeginInvoke(() =>
+                    {
+                        graphTimer.Start();
+                        //btnSaveWeight.Enabled = true;
+                    });
+
+                    break;
+                }
+                catch (Exception reconnectEx)
+                {
+                    _logger.LogWarning(reconnectEx,
+                        "Не удалось подключиться. Повтор через 5 секунд.");
+                }
+            }
         }
         //метод для события(получения данных с сервака) по обработке полцченных данных
         private void ProcessMessage(string message)
@@ -374,7 +402,26 @@ namespace PromVesClient
             else if (cBoxTypeWeighing.Text == "Брутто")
             {
                 GrossWeight = cartSideWeights.Sum();
-                TareWeight = 0;
+                if (string.IsNullOrWhiteSpace(taraWeighingBox.Text))
+                {
+                    MessageBox.Show("Введите корректное значение тары", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    //MessageBox.Show("Введите корректное значение тары");
+                    return;
+                    //TareWeight = 0;
+                }
+                else
+                {
+                    string text = taraWeighingBox.Text.Trim()
+                    .Replace('.', ',');
+                    if (!decimal.TryParse(text.Trim(), out TareWeight))
+                    {
+                        MessageBox.Show("Введите корректное значение тары");
+                        return;
+                    }
+                    TareWeight = Math.Round(TareWeight, 2);
+                    //TareWeight = decimal.TryParse()
+                }
+                
             }
             else
             {
@@ -403,6 +450,8 @@ namespace PromVesClient
             else 
             {
                 MessageBox.Show("Данные успешно сохранены в БД", "Данные сохранены", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //обновляем список вагонов
+                await loadingVagonsNumbersData();
             }
         }
         //создание точек на графике
@@ -464,6 +513,26 @@ namespace PromVesClient
             AddPoint(1, cartSideWeights[1]);
             AddPoint(2, cartSideWeights[2]);
             AddPoint(3, cartSideWeights[3]);
+        }
+        private async void Form_Load(object sender, EventArgs e)
+        {
+            await loadingVagonsNumbersData();
+        }
+
+        private async Task loadingVagonsNumbersData()
+        {
+            var result = await _staticWeighingService.GetVagonsNumbersAsync();
+            if (result.Success == true)
+            {
+                //comboBoxVagonNumber.
+                comboBoxVagonNumber.DataSource = result.Data;
+                comboBoxVagonNumber.DisplayMember = "VagonNumber";
+                comboBoxVagonNumber.SelectedIndex = -1;
+            }
+            else
+            {
+                MessageBox.Show($"Не удалось подгрузить данные номеров вагонов, причина: {result.Message}","Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using PromVesClient.DTO;
 using PromVesClient.Models;
 using System;
@@ -285,6 +286,43 @@ namespace PromVesClient.Service.StaticWeighingService
             }
             
             return images;
+        }
+
+        //получение списка всех вагонов
+        public async Task<ServiceResult<List<VagonNumberDTO>>> GetVagonsNumbersAsync()
+        {
+            try
+            {
+                var vagonsNumber = await _dbContext.Weighings
+                .Select(w => w.VagonNumber)
+                .Distinct()
+                .Select(v => new VagonNumberDTO
+                {
+                    VagonNumber = v
+                })
+                .ToListAsync();
+                //отправляем данные
+                return new ServiceResult<List<VagonNumberDTO>>
+                {
+                    Success = true,
+                    Data = vagonsNumber
+                };
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.LogError("Привышенно время ожидания ответа: " + ex.Message);
+                return ServiceResult<List<VagonNumberDTO>>.Fail("БД не отвечает, причина: " + ex.Message);
+            }
+            catch (NpgsqlException ex)
+            {
+                _logger.LogError("Ошибка сервера БД: " + ex.Message);
+                return ServiceResult<List<VagonNumberDTO>>.Fail("Ошибка сервера БД: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ошибка получения списка вагонов: {ex.Message}");
+                return ServiceResult<List<VagonNumberDTO>>.Fail("БД не отвечает, причина: " + ex.Message);
+            }
         }
         //получение локального ip адреса компьютера
         public async Task<IPAddress> GetLocalIPAddressAsync()
