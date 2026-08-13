@@ -39,8 +39,8 @@ namespace PromVesClient.Service.StaticWeighingService
             decimal WeightSum = dtoWeighing.Platform1Left + dtoWeighing.Platform1Right + dtoWeighing.Platform2Left + dtoWeighing.Platform2Right;
             //грузопольемность
             //double LoadCapacity = 70;
-            //расчет переруза/недогруза
-            decimal LoadDeviation = dtoWeighing.LoadCapacity - WeightSum;
+            //расчет переруза/недогруза временно 0
+            decimal LoadDeviation = 0;
             //временно Нетто 0
             decimal NetWeight = 0;
             //первая тележка
@@ -102,8 +102,8 @@ namespace PromVesClient.Service.StaticWeighingService
                 _logger.LogError("Ошибка получения данных: " + ex.Message);
                 return ServiceResult.Fail("Ошибка получения данных: "+ ex.Message);
             }
-            
 
+            LoadDeviation = dtoWeighing.LoadCapacity - NetWeight;
             //записываем в модель данные взвешивания
             var weighingResult = new Weighing
             { 
