@@ -72,8 +72,6 @@ namespace PromVesClient
             this.Load += Form_Load;
             //регистрации метода на ожидание новых данных
             _tcpService.MessageReceived += ProcessMessage;
-            //регистрация метода на автоматическое подставление последнего значения тары и грузоподьемности при выборе вагона
-            comboBoxVagonNumber.SelectedIndexChanged += comboBoxVagonNumber_SelectedIndexChanged;
             //регистрация метода на ожидание ошибок
             _tcpService.ConnectionError += OnConnectionError;
             //добавляем при закрытии формы проверку на окончания взвешивания
@@ -164,7 +162,7 @@ namespace PromVesClient
 
                     // _cts = new CancellationTokenSource();
 
-                    
+
 
                     //_ = _tcpService.ReceiveMessagesAsync(_tcpService.Token);
                     //для отладки
@@ -289,7 +287,7 @@ namespace PromVesClient
                 //btnWeighing.Text = "Начать взвешивание";
 
                 MessageBox.Show(
-                    ex.Message+". Пытаемся переподключиться",
+                    ex.Message + ". Пытаемся переподключиться",
                     "Ошибка",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -323,7 +321,7 @@ namespace PromVesClient
         //метод для события(получения данных с сервака) по обработке полцченных данных
         private void ProcessMessage(string message)
         {
-            try 
+            try
             {
                 //Console.WriteLine("мы находится в событии");
                 string[] parts = message.Split(';');
@@ -366,14 +364,14 @@ namespace PromVesClient
         //расчет стабильности вагона
         private void stable(decimal data)
         {
-            for (int i = 0; i<stableWeight.Length; i++)
+            for (int i = 0; i < stableWeight.Length; i++)
             {
                 if (stableWeight[i] == data && i == stableWeight.Length - 1)
                 {
                     pictureBoxStabilityTrue.Visible = true;
                     pictureBoxStabilityFalse.Visible = false;
                 }
-                else if(stableWeight[i] < data || stableWeight[i] > data)
+                else if (stableWeight[i] < data || stableWeight[i] > data)
                 {
                     pictureBoxStabilityTrue.Visible = false;
                     pictureBoxStabilityFalse.Visible = true;
@@ -396,7 +394,7 @@ namespace PromVesClient
                 MessageBox.Show("Перед сохранением дождитесь, чтобы вес был стабилен", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            
+
             if (cBoxTypeWeighing.Text == "Тара")
             {
                 TareWeight = cartSideWeights.Sum();
@@ -425,7 +423,7 @@ namespace PromVesClient
                 //    TareWeight = Math.Round(TareWeight, 2);
                 //    //TareWeight = decimal.TryParse()
                 //}
-                
+
             }
             else
             {
@@ -492,9 +490,9 @@ namespace PromVesClient
             //проерка на сохранение данных
             if (result.Success == false)
             {
-                MessageBox.Show("Данные взвешивания не были сохранены в БД. Причина: "+ result.Message, "Возникла ошибки при сохранении в БД", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Данные взвешивания не были сохранены в БД. Причина: " + result.Message, "Возникла ошибки при сохранении в БД", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            else 
+            else
             {
                 MessageBox.Show("Данные успешно сохранены в БД", "Данные сохранены", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 //обновляем список вагонов
@@ -506,25 +504,25 @@ namespace PromVesClient
         {
             //foreach (var plot in plots)
             //{
-                if (values[indexObject].Count == 300)
-                    values[indexObject].Dequeue();
+            if (values[indexObject].Count == 300)
+                values[indexObject].Dequeue();
 
-                values[indexObject].Enqueue(value);
-                
-                plots[indexObject].Plot.Clear();
-                plots[indexObject].Plot.Add.Signal(values[indexObject].ToArray());
+            values[indexObject].Enqueue(value);
 
-                plots[indexObject].Plot.Axes.SetLimits(
-                    left: 0,
-                    right: values[indexObject].Count - 1);
+            plots[indexObject].Plot.Clear();
+            plots[indexObject].Plot.Add.Signal(values[indexObject].ToArray());
 
-                plots[indexObject].Plot.Axes.AutoScaleY();
+            plots[indexObject].Plot.Axes.SetLimits(
+                left: 0,
+                right: values[indexObject].Count - 1);
 
-                plots[indexObject].Refresh();
-                //plot.Plot.Clear();
-                //plot.Refresh();
+            plots[indexObject].Plot.Axes.AutoScaleY();
+
+            plots[indexObject].Refresh();
+            //plot.Plot.Clear();
+            //plot.Refresh();
             //}
-            
+
         }
         //ивент на закрытие формы, если взвешивание активно - форма не будет закрыта и будет предупреждение
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -543,14 +541,14 @@ namespace PromVesClient
         //метод записи значений на табло
         private async Task DisplayingValue(decimal sumeWeight)
         {
-            var ListValuesImage =  await _staticWeighingService.GetImageWeighingAsync(sumeWeight);
-            for(int i = 0; ListValuesImage.Count > i; i++)
+            var ListValuesImage = await _staticWeighingService.GetImageWeighingAsync(sumeWeight);
+            for (int i = 0; ListValuesImage.Count > i; i++)
             {
-                if (pictureBoxesList.Count-1 >= i)
+                if (pictureBoxesList.Count - 1 >= i)
                 {
                     pictureBoxesList[i].Image = ListValuesImage[i];
                 }
-                
+
             }
         }
         //метод таймера
@@ -578,18 +576,43 @@ namespace PromVesClient
             }
             else
             {
-                MessageBox.Show($"Не удалось подгрузить данные номеров вагонов, причина: {result.Message}","Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Не удалось подгрузить данные номеров вагонов, причина: {result.Message}", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         // метод для обработки события изменения значения в comboBoxVagonNumber
-        private async void comboBoxVagonNumber_SelectedIndexChanged(object sender, EventArgs e)
+        private async void comboBoxVagonNumber_SelectionChangeCommitted(
+    object sender,
+    EventArgs e)
         {
             string vagonNumber = comboBoxVagonNumber.Text.Trim();
 
             if (vagonNumber.Length != 8)
                 return;
 
-            var result = await _staticWeighingService.GetLastVagonDataAsync(vagonNumber);
+            var result = await _staticWeighingService
+                .GetLastVagonDataAsync(vagonNumber);
+
+            if (!result.Success || result.Data == null)
+                return;
+
+            TareWeight = result.Data.TareWeight;
+
+            taraWeighingBox.Text =
+                result.Data.TareWeight.ToString("0.##");
+
+            txtLoadCapacity.Text =
+                result.Data.LoadCapacity.ToString("0.##");
+        }
+
+        private async void comboBoxVagonNumber_SelectionChangeCommitted_1(object sender, EventArgs e)
+        {
+            string vagonNumber = comboBoxVagonNumber.Text.Trim();
+
+            if (vagonNumber.Length != 8)
+                return;
+
+            var result = await _staticWeighingService
+                .GetLastVagonDataAsync(vagonNumber);
 
             if (!result.Success || result.Data == null)
                 return;
@@ -597,7 +620,6 @@ namespace PromVesClient
             TareWeight = result.Data.TareWeight;
 
             taraWeighingBox.Text = result.Data.TareWeight.ToString("0.##");
-
             txtLoadCapacity.Text = result.Data.LoadCapacity.ToString("0.##");
         }
     }
