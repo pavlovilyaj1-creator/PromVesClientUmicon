@@ -54,6 +54,8 @@
             formsPlot4 = new ScottPlot.WinForms.FormsPlot();
             label2 = new Label();
             taraWeighingBox = new TextBox();
+            txtLoadCapacity = new TextBox();
+            label5 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
@@ -206,7 +208,7 @@
             // 
             comboBoxVagonNumber.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             comboBoxVagonNumber.FormattingEnabled = true;
-            comboBoxVagonNumber.Location = new Point(1087, 152);
+            comboBoxVagonNumber.Location = new Point(1106, 150);
             comboBoxVagonNumber.Name = "comboBoxVagonNumber";
             comboBoxVagonNumber.Size = new Size(142, 25);
             comboBoxVagonNumber.TabIndex = 19;
@@ -227,7 +229,7 @@
             cBoxTypeWeighing.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
             cBoxTypeWeighing.FormattingEnabled = true;
             cBoxTypeWeighing.Items.AddRange(new object[] { "Тара", "Брутто" });
-            cBoxTypeWeighing.Location = new Point(1087, 185);
+            cBoxTypeWeighing.Location = new Point(1106, 184);
             cBoxTypeWeighing.Name = "cBoxTypeWeighing";
             cBoxTypeWeighing.Size = new Size(142, 25);
             cBoxTypeWeighing.TabIndex = 21;
@@ -237,9 +239,9 @@
             // 
             btnSaveWeight.Enabled = false;
             btnSaveWeight.Font = new Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            btnSaveWeight.Location = new Point(946, 245);
+            btnSaveWeight.Location = new Point(946, 282);
             btnSaveWeight.Name = "btnSaveWeight";
-            btnSaveWeight.Size = new Size(283, 28);
+            btnSaveWeight.Size = new Size(302, 28);
             btnSaveWeight.TabIndex = 22;
             btnSaveWeight.Text = "Сохранить вес";
             btnSaveWeight.UseVisualStyleBackColor = true;
@@ -296,16 +298,35 @@
             // 
             // taraWeighingBox
             // 
-            taraWeighingBox.Location = new Point(1087, 215);
+            taraWeighingBox.Location = new Point(1106, 215);
             taraWeighingBox.Name = "taraWeighingBox";
             taraWeighingBox.Size = new Size(142, 23);
             taraWeighingBox.TabIndex = 29;
+            // 
+            // txtLoadCapacity
+            // 
+            txtLoadCapacity.Location = new Point(1106, 244);
+            txtLoadCapacity.Name = "txtLoadCapacity";
+            txtLoadCapacity.Size = new Size(142, 23);
+            txtLoadCapacity.TabIndex = 30;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label5.Location = new Point(946, 242);
+            label5.Name = "label5";
+            label5.Size = new Size(146, 21);
+            label5.TabIndex = 31;
+            label5.Text = "Грузоподъёмность";
             // 
             // StaticWeighing
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1338, 665);
+            Controls.Add(label5);
+            Controls.Add(txtLoadCapacity);
             Controls.Add(taraWeighingBox);
             Controls.Add(label2);
             Controls.Add(formsPlot4);
@@ -374,5 +395,7 @@
         private ScottPlot.WinForms.FormsPlot formsPlot4;
         private Label label2;
         private TextBox taraWeighingBox;
+        private TextBox txtLoadCapacity;
+        private Label label5;
     }
 }

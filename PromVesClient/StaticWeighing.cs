@@ -71,6 +71,8 @@ namespace PromVesClient
             this.Load += Form_Load;
             //регистрации метода на ожидание новых данных
             _tcpService.MessageReceived += ProcessMessage;
+            //регистрация метода на автоматическое подставление последнего значения тары и грузоподьемности при выборе вагона
+            comboBoxVagonNumber.SelectedIndexChanged += comboBoxVagonNumber_SelectedIndexChanged;
             //регистрация метода на ожидание ошибок
             _tcpService.ConnectionError += OnConnectionError;
             //добавляем при закрытии формы проверку на окончания взвешивания
@@ -428,6 +430,27 @@ namespace PromVesClient
                 MessageBox.Show("Выберите тип взвешивания", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            if (!decimal.TryParse(txtLoadCapacity.Text, out decimal loadCapacity))
+            {
+                MessageBox.Show(
+                    "Введите корректное значение грузоподъёмности.",
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            if (loadCapacity <= 0)
+            {
+                MessageBox.Show(
+                    "Грузоподъёмность должна быть больше нуля.",
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
             var resultt = await _staticWeighingService.saveReceiptAsync(IdReceipt, "Статическое взвешивание", _currentUserService.CurrentUser.Name);
             WeighingDto dto = new WeighingDto
             {
@@ -437,6 +460,7 @@ namespace PromVesClient
                 Platform2Right = cartSideWeights[3],
                 VagonNumber = comboBoxVagonNumber.Text,
                 TareWeight = TareWeight,
+                LoadCapacity = loadCapacity,
                 GrossWeight = GrossWeight,
                 TypeWeighing = cBoxTypeWeighing.Text,
                 IdReceipt = IdReceipt
@@ -533,6 +557,25 @@ namespace PromVesClient
             {
                 MessageBox.Show($"Не удалось подгрузить данные номеров вагонов, причина: {result.Message}","Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+        // метод для обработки события изменения значения в comboBoxVagonNumber
+        private async void comboBoxVagonNumber_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string vagonNumber = comboBoxVagonNumber.Text.Trim();
+
+            if (vagonNumber.Length != 8)
+                return;
+
+            var result = await _staticWeighingService.GetLastVagonDataAsync(vagonNumber);
+
+            if (!result.Success || result.Data == null)
+                return;
+
+            TareWeight = result.Data.TareWeight;
+
+            taraWeighingBox.Text = result.Data.TareWeight.ToString("0.##");
+
+            txtLoadCapacity.Text = result.Data.LoadCapacity.ToString("0.##");
         }
     }
 }

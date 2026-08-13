@@ -40,7 +40,7 @@ namespace PromVesClient.Service.StaticWeighingService
             //грузопольемность
             //double LoadCapacity = 70;
             //расчет переруза/недогруза
-            decimal LoadDeviation = DefaultLoadCapacity - WeightSum;
+            decimal LoadDeviation = dtoWeighing.LoadCapacity - WeightSum;
             //временно Нетто 0
             decimal NetWeight = 0;
             //первая тележка
@@ -112,7 +112,7 @@ namespace PromVesClient.Service.StaticWeighingService
                 TareWeight = dtoWeighing.TareWeight,
                 GrossWeight = dtoWeighing.GrossWeight,
                 NetWeight = NetWeight,
-                LoadCapacity = DefaultLoadCapacity,
+                LoadCapacity = dtoWeighing.LoadCapacity,
                 LoadDeviation = LoadDeviation,
                 FirstCart = FirstCart,
                 SecondCart = SecondCart,
@@ -324,6 +324,46 @@ namespace PromVesClient.Service.StaticWeighingService
                 return ServiceResult<List<VagonNumberDTO>>.Fail("БД не отвечает, причина: " + ex.Message);
             }
         }
+
+        //метод получения последней записи по номеру вагона
+        public async Task<ServiceResult<VagonLastDataDto>> GetLastVagonDataAsync(string vagonNumber)
+        {
+            try
+            {
+                var lastWeighing = await _dbContext.Weighings
+                    .Include(w => w.Receipt)
+                    .Where(w => w.VagonNumber == vagonNumber)
+                    .OrderByDescending(w => w.Receipt.DateTime)
+                    .FirstOrDefaultAsync();
+
+                if (lastWeighing == null)
+                {
+                    return ServiceResult<VagonLastDataDto>.Fail(
+                        "Для данного вагона нет предыдущих взвешиваний.");
+                }
+
+                return new ServiceResult<VagonLastDataDto>
+                {
+                    Success = true,
+                    Data = new VagonLastDataDto
+                    {
+                        TareWeight = lastWeighing.TareWeight,
+                        LoadCapacity = lastWeighing.LoadCapacity
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Ошибка получения данных вагона {VagonNumber}",
+                    vagonNumber);
+
+                return ServiceResult<VagonLastDataDto>.Fail(
+                    "Ошибка получения данных вагона: " + ex.Message);
+            }
+        }
+
         //получение локального ip адреса компьютера
         public async Task<IPAddress> GetLocalIPAddressAsync()
         {

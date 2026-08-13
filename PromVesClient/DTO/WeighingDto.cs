@@ -18,5 +18,6 @@ namespace PromVesClient.DTO
 
         public string TypeWeighing { get; set; }
         public Guid IdReceipt { get; set; }
+        public decimal LoadCapacity { get; set; }
     }
 }

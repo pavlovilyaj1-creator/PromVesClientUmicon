@@ -30,6 +30,8 @@ namespace PromVesClient
             //.WriteTo.File("logs/log.txt")
             //.CreateLogger();
             InitializeComponent();
+            textBoxPassword.PasswordChar = '*';
+            comboBoxLogin.Height = textBoxPassword.Height;
             _logger.LogInformation("Приложение запущено");
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             programVersion.Text = _appInfoService.VersionInfo();
@@ -37,9 +39,23 @@ namespace PromVesClient
 
         }
         
-        private void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object sender, EventArgs e)
         {
+            var result = await _userService.GetUsersAsync();
 
+            if (!result.Success || result.Data == null)
+            {
+                MessageBox.Show(
+                    result.Message,
+                    "Ошибка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return;
+            }
+
+            comboBoxLogin.DataSource = result.Data;
+            comboBoxLogin.DisplayMember = "Name";
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -50,7 +66,7 @@ namespace PromVesClient
         private async void button1_Click(object sender, EventArgs e)
         {
             //метод авторизации, временно закоменчен
-            var result = await _userService.UserAuthorizationAsync(textBoxLogin.Text, textBoxPassword.Text);
+            var result = await _userService.UserAuthorizationAsync(comboBoxLogin.Text, textBoxPassword.Text);
 
             //временный метод создания пользователя
             //var result = await _userService.createUserAsync(textBoxLogin.Text, textBoxPassword.Text);

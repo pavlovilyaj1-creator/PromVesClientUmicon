@@ -32,10 +32,10 @@
             label1 = new Label();
             label2 = new Label();
             button1 = new Button();
-            textBoxLogin = new TextBox();
             textBoxPassword = new TextBox();
             programVersion = new Label();
             pictureBox1 = new PictureBox();
+            comboBoxLogin = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -71,15 +71,6 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
-            // textBoxLogin
-            // 
-            textBoxLogin.Font = new Font("Segoe UI", 21.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            textBoxLogin.Location = new Point(472, 310);
-            textBoxLogin.Multiline = true;
-            textBoxLogin.Name = "textBoxLogin";
-            textBoxLogin.Size = new Size(394, 49);
-            textBoxLogin.TabIndex = 3;
-            // 
             // textBoxPassword
             // 
             textBoxPassword.Font = new Font("Segoe UI", 21.75F, FontStyle.Regular, GraphicsUnit.Point, 204);
@@ -109,15 +100,25 @@
             pictureBox1.TabStop = false;
             pictureBox1.Click += pictureBox1_Click;
             // 
+            // comboBoxLogin
+            // 
+            comboBoxLogin.DropDownHeight = 150;
+            comboBoxLogin.FormattingEnabled = true;
+            comboBoxLogin.Location = new Point(481, 310);
+            comboBoxLogin.Name = "comboBoxLogin";
+            comboBoxLogin.RightToLeft = RightToLeft.No;
+            comboBoxLogin.Size = new Size(372, 23);
+            comboBoxLogin.TabIndex = 7;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1230, 561);
+            Controls.Add(comboBoxLogin);
             Controls.Add(pictureBox1);
             Controls.Add(programVersion);
             Controls.Add(textBoxPassword);
-            Controls.Add(textBoxLogin);
             Controls.Add(button1);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -137,9 +138,9 @@
         private Label label1;
         private Label label2;
         private Button button1;
-        private TextBox textBoxLogin;
         private TextBox textBoxPassword;
         private Label programVersion;
         private PictureBox pictureBox1;
+        private ComboBox comboBoxLogin;
     }
 }
