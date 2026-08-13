@@ -463,7 +463,7 @@ namespace PromVesClient
                     values[indexObject].Dequeue();
 
                 values[indexObject].Enqueue(value);
-
+                
                 plots[indexObject].Plot.Clear();
                 plots[indexObject].Plot.Add.Signal(values[indexObject].ToArray());
 
