@@ -112,7 +112,7 @@ namespace PromVesClient
             var configuration = result.Data;
 
             LoadPortToControls(
-                configuration.SerialPort,
+                configuration.SerialPorts[0],
                 cbPortName,
                 cbBaudRate,
                 cbDataBits,
@@ -175,7 +175,7 @@ namespace PromVesClient
         {
             var configuration = new SerialPortConfiguration();
 
-            configuration.SerialPort =
+            configuration.SerialPorts.Add(
                 ReadPortFromControls(
                     cbPortName,
                     cbBaudRate,
@@ -183,7 +183,7 @@ namespace PromVesClient
                     cbParity,
                     cbStopBits,
                     cbHandshake,
-                    1);
+                    1));
 
             var result = _comPortService.Save(configuration);
 
@@ -252,7 +252,7 @@ namespace PromVesClient
             var configuration = result.Data;
 
             LoadPortToControls(
-     configuration.SerialPort,
+     configuration.SerialPorts[0],
      cbPortName,
      cbBaudRate,
      cbDataBits,

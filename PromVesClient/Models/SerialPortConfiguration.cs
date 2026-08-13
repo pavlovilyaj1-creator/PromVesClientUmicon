@@ -6,6 +6,6 @@ namespace PromVesClient.Models
 {
     public class SerialPortConfiguration
     {
-        public SerialPortSettings SerialPort { get; set; } = new();
+        public List<SerialPortSettings> SerialPorts { get; set; } = [];
     }
 }

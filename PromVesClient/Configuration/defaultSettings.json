@@ -1,11 +1,13 @@
 ﻿{
-  "SerialPort": {
-    "Id": 1,
-    "PortName": "",
-    "BaudRate": 9600,
-    "DataBits": 8,
-    "Parity": "Even",
-    "StopBits": "One",
-    "Handshake": "None"
-  }
+  "SerialPorts": [
+    {
+      "Id": 1,
+      "PortName": "",
+      "BaudRate": 9600,
+      "DataBits": 8,
+      "Parity": "Even",
+      "StopBits": "One",
+      "Handshake": "None"
+    }
+  ]
 }
