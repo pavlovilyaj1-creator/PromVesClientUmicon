@@ -57,6 +57,7 @@ namespace PromVesClient
         private decimal[] stableWeight = new decimal[100];
         //поля предназначенные для передачи данных в методы сохранения данных  в БД
         private decimal TareWeight;
+        private decimal LoadCapacity;
         private decimal GrossWeight;
         private Guid IdReceipt;
 
@@ -404,25 +405,26 @@ namespace PromVesClient
             else if (cBoxTypeWeighing.Text == "Брутто")
             {
                 GrossWeight = cartSideWeights.Sum();
-                if (string.IsNullOrWhiteSpace(taraWeighingBox.Text))
-                {
-                    MessageBox.Show("Введите корректное значение тары", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    //MessageBox.Show("Введите корректное значение тары");
-                    return;
-                    //TareWeight = 0;
-                }
-                else
-                {
-                    string text = taraWeighingBox.Text.Trim()
-                    .Replace('.', ',');
-                    if (!decimal.TryParse(text.Trim(), out TareWeight))
-                    {
-                        MessageBox.Show("Введите корректное значение тары");
-                        return;
-                    }
-                    TareWeight = Math.Round(TareWeight, 2);
-                    //TareWeight = decimal.TryParse()
-                }
+                TareWeight = 0;
+                //if (string.IsNullOrWhiteSpace(taraWeighingBox.Text))
+                //{
+                //    MessageBox.Show("Введите корректное значение тары", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //    //MessageBox.Show("Введите корректное значение тары");
+                //    return;
+                //    //TareWeight = 0;
+                //}
+                //else
+                //{
+                //    string text = taraWeighingBox.Text.Trim()
+                //    .Replace('.', ',');
+                //    if (!decimal.TryParse(text.Trim(), out TareWeight))
+                //    {
+                //        MessageBox.Show("Введите корректное значение тары");
+                //        return;
+                //    }
+                //    TareWeight = Math.Round(TareWeight, 2);
+                //    //TareWeight = decimal.TryParse()
+                //}
                 
             }
             else
@@ -430,27 +432,48 @@ namespace PromVesClient
                 MessageBox.Show("Выберите тип взвешивания", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            if (!decimal.TryParse(txtLoadCapacity.Text, out decimal loadCapacity))
+            if (string.IsNullOrWhiteSpace(txtLoadCapacity.Text))
             {
-                MessageBox.Show(
-                    "Введите корректное значение грузоподъёмности.",
-                    "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
+                MessageBox.Show("Введите корректное значение грузоподъёмности", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //MessageBox.Show("Введите корректное значение тары");
                 return;
+                //TareWeight = 0;
+            }
+            else
+            {
+                string text = txtLoadCapacity.Text.Trim()
+                .Replace('.', ',');
+                if (!decimal.TryParse(text.Trim(), out LoadCapacity))
+                {
+                    MessageBox.Show("Введите корректное значение грузоподъёмности");
+                    return;
+                }
+                LoadCapacity = Math.Round(LoadCapacity, 2);
+                //TareWeight = decimal.TryParse()
             }
 
-            if (loadCapacity <= 0)
-            {
-                MessageBox.Show(
-                    "Грузоподъёмность должна быть больше нуля.",
-                    "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+            //if (!decimal.TryParse(txtLoadCapacity.Text, out decimal loadCapacity))
+            //{
+            //    MessageBox.Show(
+            //        "Введите корректное значение грузоподъёмности.",
+            //        "Ошибка",
+            //        MessageBoxButtons.OK,
+            //        MessageBoxIcon.Warning);
 
-                return;
-            }
+            //    return;
+            //}
+
+            //код палыча
+            //if (loadCapacity <= 0)
+            //{
+            //    MessageBox.Show(
+            //        "Грузоподъёмность должна быть больше нуля.",
+            //        "Ошибка",
+            //        MessageBoxButtons.OK,
+            //        MessageBoxIcon.Warning);
+
+            //    return;
+            //}
             var resultt = await _staticWeighingService.saveReceiptAsync(IdReceipt, "Статическое взвешивание", _currentUserService.CurrentUser.Name);
             WeighingDto dto = new WeighingDto
             {
@@ -460,7 +483,7 @@ namespace PromVesClient
                 Platform2Right = cartSideWeights[3],
                 VagonNumber = comboBoxVagonNumber.Text,
                 TareWeight = TareWeight,
-                LoadCapacity = loadCapacity,
+                LoadCapacity = LoadCapacity,
                 GrossWeight = GrossWeight,
                 TypeWeighing = cBoxTypeWeighing.Text,
                 IdReceipt = IdReceipt

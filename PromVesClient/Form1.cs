@@ -36,9 +36,8 @@ namespace PromVesClient
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             programVersion.Text = _appInfoService.VersionInfo();
             //programVersion.Text = "Версия: 1.0.0";
-
         }
-        
+
         private async void Form1_Load(object sender, EventArgs e)
         {
             var result = await _userService.GetUsersAsync();
@@ -98,6 +97,11 @@ namespace PromVesClient
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBoxLogin_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

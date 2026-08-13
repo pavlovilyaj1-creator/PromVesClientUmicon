@@ -103,12 +103,15 @@
             // comboBoxLogin
             // 
             comboBoxLogin.DropDownHeight = 150;
+            comboBoxLogin.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
             comboBoxLogin.FormattingEnabled = true;
-            comboBoxLogin.Location = new Point(481, 310);
+            comboBoxLogin.IntegralHeight = false;
+            comboBoxLogin.Location = new Point(472, 311);
             comboBoxLogin.Name = "comboBoxLogin";
             comboBoxLogin.RightToLeft = RightToLeft.No;
-            comboBoxLogin.Size = new Size(372, 23);
+            comboBoxLogin.Size = new Size(394, 45);
             comboBoxLogin.TabIndex = 7;
+            comboBoxLogin.SelectedIndexChanged += comboBoxLogin_SelectedIndexChanged;
             // 
             // Form1
             // 
