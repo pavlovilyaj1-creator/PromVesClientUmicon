@@ -28,6 +28,8 @@ namespace PromVesClient
         //логи
         private readonly ILogger<StaticWeighing> _logger;
 
+        private bool _isLoadingVagons = false;
+
         private readonly StaticWeighingService _staticWeighingService;
         //обьект, который отвечает за подключение/отключение/получение данных сервера
         private readonly TcpService _tcpService;
@@ -116,7 +118,10 @@ namespace PromVesClient
 
         private void StaticWeighing_Load(object sender, EventArgs e)
         {
+            taraWeighingBox.Clear();
+            txtLoadCapacity.Clear();
 
+            TareWeight = 0;
         }
 
         private void pictureBox6_Click(object sender, EventArgs e)
@@ -566,18 +571,27 @@ namespace PromVesClient
 
         private async Task loadingVagonsNumbersData()
         {
-            var result = await _staticWeighingService.GetVagonsNumbersAsync();
-            if (result.Success == true)
+            _isLoadingVagons = true;
+
+            try
             {
-                //comboBoxVagonNumber.
-                comboBoxVagonNumber.DataSource = result.Data;
-                comboBoxVagonNumber.DisplayMember = "VagonNumber";
-                comboBoxVagonNumber.SelectedIndex = -1;
+                var result = await _staticWeighingService.GetVagonsNumbersAsync();
+
+                if (result.Success && result.Data != null)
+                {
+                    comboBoxVagonNumber.DataSource = result.Data;
+                    comboBoxVagonNumber.DisplayMember = "VagonNumber";
+                    comboBoxVagonNumber.SelectedIndex = -1;
+                }
             }
-            else
+            finally
             {
-                MessageBox.Show($"Не удалось подгрузить данные номеров вагонов, причина: {result.Message}", "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _isLoadingVagons = false;
             }
+
+            taraWeighingBox.Clear();
+            txtLoadCapacity.Clear();
+            TareWeight = 0;
         }
         // метод для обработки события изменения значения в comboBoxVagonNumber
         private async void comboBoxVagonNumber_SelectionChangeCommitted(
@@ -604,8 +618,16 @@ namespace PromVesClient
                 result.Data.LoadCapacity.ToString("0.##");
         }
 
-        private async void comboBoxVagonNumber_SelectionChangeCommitted_1(object sender, EventArgs e)
+        private async void comboBoxVagonNumber_SelectedIndexChanged(
+     object sender,
+     EventArgs e)
         {
+            if (_isLoadingVagons)
+                return;
+
+            if (comboBoxVagonNumber.SelectedIndex == -1)
+                return;
+
             string vagonNumber = comboBoxVagonNumber.Text.Trim();
 
             if (vagonNumber.Length != 8)
@@ -619,8 +641,67 @@ namespace PromVesClient
 
             TareWeight = result.Data.TareWeight;
 
-            taraWeighingBox.Text = result.Data.TareWeight.ToString("0.##");
-            txtLoadCapacity.Text = result.Data.LoadCapacity.ToString("0.##");
+            taraWeighingBox.Text =
+                result.Data.TareWeight.ToString("0.##");
+
+            txtLoadCapacity.Text =
+                result.Data.LoadCapacity.ToString("0.##");
+        }
+        private async Task LoadVagonsAsync()
+        {
+            _isLoadingVagons = true;
+
+            try
+            {
+                var result = await _staticWeighingService.GetVagonsNumbersAsync();
+
+                if (!result.Success || result.Data == null)
+                {
+                    MessageBox.Show(
+                        result.Message,
+                        "Ошибка",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+
+                    return;
+                }
+
+                comboBoxVagonNumber.DataSource = result.Data;
+                comboBoxVagonNumber.DisplayMember = "VagonNumber";
+                comboBoxVagonNumber.SelectedIndex = -1;
+            }
+            finally
+            {
+                _isLoadingVagons = false;
+            }
+        }
+
+        private async void comboBoxVagonNumber_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            if (_isLoadingVagons)
+                return;
+
+            if (comboBoxVagonNumber.SelectedIndex == -1)
+                return;
+
+            string vagonNumber = comboBoxVagonNumber.Text.Trim();
+
+            if (vagonNumber.Length != 8)
+                return;
+
+            var result = await _staticWeighingService
+                .GetLastVagonDataAsync(vagonNumber);
+
+            if (!result.Success || result.Data == null)
+                return;
+
+            TareWeight = result.Data.TareWeight;
+
+            taraWeighingBox.Text =
+                result.Data.TareWeight.ToString("0.##");
+
+            txtLoadCapacity.Text =
+                result.Data.LoadCapacity.ToString("0.##");
         }
     }
 }
