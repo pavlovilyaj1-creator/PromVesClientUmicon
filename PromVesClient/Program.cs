@@ -52,6 +52,7 @@ namespace PromVesClient
             services.AddTransient<ComPortSettingsForm>();
             services.AddTransient<UserManagementForm>();
             services.AddTransient<ChangeUserForm>();
+            services.AddTransient<WagonForm>();
 
             //регистрация сервисов
             services.AddScoped<UserService>();
@@ -62,9 +63,9 @@ namespace PromVesClient
             services.AddScoped<TcpService>();
             services.AddScoped<ReceiptsService>();
             services.AddScoped<ExcelReportService>();
+            services.AddScoped<WagonService>();
             //регистрация одного экземпляра, чтобы все формы работали именно с ним
             services.AddSingleton<CurrentUserService>();
-
             var provider = services.BuildServiceProvider();
             ApplicationConfiguration.Initialize();
             Application.Run(

@@ -70,8 +70,29 @@ namespace PromVesClient
             _currentUserService = currentUserService;
             _tcpService = tcpService;
             InitializeComponent();
+
+            // Кнопка запуска должна быть недоступна до выбора вагона.
+            btnWeighing.Enabled = false;
+
+            // Разрешаем обработку клавиатуры на уровне формы, чтобы ловить сочетания
+            // типа v / Alt+v независимо от текущего активного элемента управления.
+            this.KeyPreview = true;
+            this.KeyDown += StaticWeighing_KeyDown;
+            this.MouseDown += StaticWeighing_MouseDown;
+
+            // Для списка номеров вагонов включаем обычный ввод текста с автоподбором и
+            // стандартным поведением раскрывающегося списка.
+            comboBoxVagonNumber.DropDownStyle = ComboBoxStyle.DropDown;
+            comboBoxVagonNumber.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            comboBoxVagonNumber.AutoCompleteSource = AutoCompleteSource.ListItems;
+            comboBoxVagonNumber.KeyDown += comboBoxVagonNumber_KeyDown;
+
             //подгрузка данных номера вагона
             this.Load += Form_Load;
+
+            // Важное замечание: при загрузке списка загрузка данных идёт через async-метод,
+            // поэтому мы не должны пытаться сразу читать SelectedIndex, пока список ещё не заполнен.
+            // Состояние _isLoadingVagons используется как защита от повторных вызовов.
             //регистрации метода на ожидание новых данных
             _tcpService.MessageReceived += ProcessMessage;
             //регистрация метода на ожидание ошибок
@@ -111,6 +132,87 @@ namespace PromVesClient
             pictureBox6.Image = Properties.Resources._0;
         }
 
+        // Состояние кнопки запуска зависит от выбора вагона.
+        // Если номер вагона не выбран, запуск взвешивания запрещён.
+        private void UpdateWeighingButtonState()
+        {
+            bool hasVagonSelected = comboBoxVagonNumber.SelectedIndex >= 0 &&
+                !string.IsNullOrWhiteSpace(comboBoxVagonNumber.Text);
+
+            bool isStartState = btnWeighing.Text.Equals("Начать взвешивание", StringComparison.OrdinalIgnoreCase);
+            btnWeighing.Enabled = isStartState ? hasVagonSelected : true;
+        }
+
+        // Модальное окно подтверждения запуска взвешивания.
+        // Окно блокирует основной экран до выбора оператора.
+        // Кнопка "Отмена" выделена по умолчанию, Esc и крестик трактуются как отмена.
+        private DialogResult ShowWeighingConfirmationDialog()
+        {
+            var dialog = new Form
+            {
+                Text = "Подтверждение запуска взвешивания",
+                StartPosition = FormStartPosition.CenterParent,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                ShowInTaskbar = false,
+                Width = 450,
+                Height = 220,
+                ControlBox = true,
+                AutoScaleMode = AutoScaleMode.Font,
+                Owner = this,
+            };
+
+            var summaryLabel = new Label
+            {
+                AutoSize = true,
+                MaximumSize = new Size(360, 0),
+                Location = new Point(16, 18),
+                Font = new Font("Segoe UI", 10F),
+                Text = string.Join(Environment.NewLine,
+                    "Подтверждаете запуск взвешивания?",
+                    string.Empty,
+                    $"Номер вагона: {comboBoxVagonNumber.Text}",
+                    $"Тара: {taraWeighingBox.Text}",
+                    $"Грузоподъёмность: {txtLoadCapacity.Text}",
+                    $"Тип взвешивания: {cBoxTypeWeighing.Text}")
+            };
+
+            var yesButton = new Button
+            {
+                Text = "Да",
+                DialogResult = DialogResult.Yes,
+                Size = new Size(95, 32),
+                Location = new Point(218, 148),
+                TabIndex = 0,
+            };
+
+            var cancelButton = new Button
+            {
+                Text = "Отмена",
+                DialogResult = DialogResult.Cancel,
+                Size = new Size(95, 32),
+                Location = new Point(319, 148),
+                TabIndex = 1,
+            };
+
+            dialog.Controls.Add(summaryLabel);
+            dialog.Controls.Add(yesButton);
+            dialog.Controls.Add(cancelButton);
+            dialog.AcceptButton = yesButton;
+            dialog.CancelButton = cancelButton;
+            dialog.FormClosing += (_, e) =>
+            {
+                if (dialog.DialogResult == DialogResult.None)
+                {
+                    dialog.DialogResult = DialogResult.Cancel;
+                }
+            };
+
+            cancelButton.Select();
+            return dialog.ShowDialog(this);
+        }
+
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             //pictureBox1.Image = Properties.Resources._1t;
@@ -123,6 +225,67 @@ namespace PromVesClient
 
             TareWeight = 0;
         }
+
+        // Обрабатываем клавиши только внутри поля номера вагона:
+        // Escape — отмена выбора и закрытие списка,
+        // Enter — подтверждение выбора без дополнительной повторной обработки.
+        private void comboBoxVagonNumber_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape && comboBoxVagonNumber.DroppedDown)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                comboBoxVagonNumber.DroppedDown = false;
+                comboBoxVagonNumber.SelectedIndex = -1;
+                comboBoxVagonNumber.Text = string.Empty;
+                return;
+            }
+
+            if (e.KeyCode == Keys.Enter && comboBoxVagonNumber.DroppedDown)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                comboBoxVagonNumber.DroppedDown = false;
+                return;
+            }
+        }
+
+        // Поддерживаем горячую клавишу открытия списка: v или Alt+v.
+        // Если список уже открыт и активен другой элемент, можно просто сфокусировать поле и открыть dropdown.
+        private void StaticWeighing_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control || e.Shift)
+                return;
+
+            if (e.KeyCode == Keys.V && (e.Alt || ActiveControl != comboBoxVagonNumber))
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                comboBoxVagonNumber.Focus();
+                comboBoxVagonNumber.DroppedDown = true;
+            }
+        }
+
+        // Закрываем список, если пользователь кликает мышью вне поля ввода.
+        // Это позволяет отменить выбор, не трогая уже загруженный список.
+        private void StaticWeighing_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (!comboBoxVagonNumber.DroppedDown)
+                return;
+
+            var hitRect = comboBoxVagonNumber.RectangleToScreen(comboBoxVagonNumber.ClientRectangle);
+
+            if (!hitRect.Contains(Control.MousePosition))
+            {
+                comboBoxVagonNumber.DroppedDown = false;
+                if (comboBoxVagonNumber.SelectedIndex == -1)
+                    comboBoxVagonNumber.Text = string.Empty;
+            }
+        }
+
+        // Небольшая защита от повторных вызовов при асинхронной загрузке данных:
+        // пока список вагонов ещё заполняется, обработчики выбора должны игнорироваться.
+        // Это исключает гонки между DataSource и SelectedIndex.
 
         private void pictureBox6_Click(object sender, EventArgs e)
         {
@@ -154,6 +317,20 @@ namespace PromVesClient
         {
             if (btnWeighing.Text == "Начать взвешивание")
             {
+                // Без выбранного номера вагона запуск запрещён.
+                if (comboBoxVagonNumber.SelectedIndex < 0 || string.IsNullOrWhiteSpace(comboBoxVagonNumber.Text))
+                {
+                    btnWeighing.Enabled = false;
+                    return;
+                }
+                // Модальное окно подтверждения блокирует основной экран до выбора.
+                var confirmResult = ShowWeighingConfirmationDialog();
+                if (confirmResult != DialogResult.Yes)
+                {
+                    // Отмена: возвращаемся к экрану ввода, данные сохраняются.
+                    return;
+                }
+
                 try
                 {
                     //_client = new TcpClient();
@@ -173,11 +350,12 @@ namespace PromVesClient
                     //для отладки
                     //MessageBox.Show("Подключено");
 
-                    //начали взвешивание - данные можно сохранить
+                    // Реальное взвешивание начинается только после подтверждения "Да".
                     btnSaveWeight.Enabled = true;
                     graphTimer.Start();
                     IdReceipt = Guid.NewGuid();
                     btnWeighing.Text = "Закончить взвешивание";
+                    UpdateWeighingButtonState();
                 }
                 catch (Exception ex)
                 {
@@ -208,6 +386,7 @@ namespace PromVesClient
                 //MessageBox.Show("Соединение закрыто");
                 graphTimer.Stop();
                 btnWeighing.Text = "Начать взвешивание";
+                UpdateWeighingButtonState();
             }
         }
 
@@ -567,6 +746,7 @@ namespace PromVesClient
         private async void Form_Load(object sender, EventArgs e)
         {
             await loadingVagonsNumbersData();
+            UpdateWeighingButtonState();
         }
 
         private async Task loadingVagonsNumbersData()
@@ -581,7 +761,9 @@ namespace PromVesClient
                 {
                     comboBoxVagonNumber.DataSource = result.Data;
                     comboBoxVagonNumber.DisplayMember = "VagonNumber";
+                    comboBoxVagonNumber.AutoCompleteSource = AutoCompleteSource.ListItems;
                     comboBoxVagonNumber.SelectedIndex = -1;
+                    comboBoxVagonNumber.Text = string.Empty;
                 }
             }
             finally
@@ -592,36 +774,44 @@ namespace PromVesClient
             taraWeighingBox.Clear();
             txtLoadCapacity.Clear();
             TareWeight = 0;
+            UpdateWeighingButtonState();
         }
         // метод для обработки события изменения значения в comboBoxVagonNumber
+        // Подтягиваем справочные данные вагона по его номеру из модели Wagon.
+        // После выбора номера автоматически выставляем тип взвешивания в «Брутто».
         private async void comboBoxVagonNumber_SelectionChangeCommitted(
     object sender,
     EventArgs e)
         {
             string vagonNumber = comboBoxVagonNumber.Text.Trim();
 
-            if (vagonNumber.Length != 8)
+            if (string.IsNullOrWhiteSpace(vagonNumber))
                 return;
 
+            // Номер вагона хранится в справочнике Wagon и может быть короче 8 символов,
+            // поэтому проверка по длине убрана: в справочнике допустимы все корректные номера.
             var result = await _staticWeighingService
                 .GetLastVagonDataAsync(vagonNumber);
 
             if (!result.Success || result.Data == null)
                 return;
 
+            // Для выбранного вагона выставляем актуальную тару и грузоподъемность.
             TareWeight = result.Data.TareWeight;
+            taraWeighingBox.Text = result.Data.TareWeight.ToString("0.##");
+            txtLoadCapacity.Text = result.Data.LoadCapacity.ToString("0.##");
 
-            taraWeighingBox.Text =
-                result.Data.TareWeight.ToString("0.##");
-
-            txtLoadCapacity.Text =
-                result.Data.LoadCapacity.ToString("0.##");
+            // После выбора вагона в статическом взвешивании используются данные по брутто.
+            cBoxTypeWeighing.SelectedIndex = 1;
         }
 
+        // Пока список вагонов загружается, пропускаем обработку выбора, чтобы не было гонок.
         private async void comboBoxVagonNumber_SelectedIndexChanged(
      object sender,
      EventArgs e)
         {
+            UpdateWeighingButtonState();
+
             if (_isLoadingVagons)
                 return;
 
@@ -630,7 +820,7 @@ namespace PromVesClient
 
             string vagonNumber = comboBoxVagonNumber.Text.Trim();
 
-            if (vagonNumber.Length != 8)
+            if (string.IsNullOrWhiteSpace(vagonNumber))
                 return;
 
             var result = await _staticWeighingService
@@ -640,13 +830,15 @@ namespace PromVesClient
                 return;
 
             TareWeight = result.Data.TareWeight;
+            taraWeighingBox.Text = result.Data.TareWeight.ToString("0.##");
+            txtLoadCapacity.Text = result.Data.LoadCapacity.ToString("0.##");
 
-            taraWeighingBox.Text =
-                result.Data.TareWeight.ToString("0.##");
-
-            txtLoadCapacity.Text =
-                result.Data.LoadCapacity.ToString("0.##");
+            // Принудительно выставляем тип взвешивания на «Брутто» при выборе вагона.
+            cBoxTypeWeighing.SelectedIndex = 1;
         }
+
+        // Перезагрузка списка вагонов должна идти из модели Wagon,
+        // а не из истории Weighings, чтобы список был стабильным и не зависел от прошлых взвешиваний.
         private async Task LoadVagonsAsync()
         {
             _isLoadingVagons = true;
@@ -668,7 +860,9 @@ namespace PromVesClient
 
                 comboBoxVagonNumber.DataSource = result.Data;
                 comboBoxVagonNumber.DisplayMember = "VagonNumber";
+                comboBoxVagonNumber.AutoCompleteSource = AutoCompleteSource.ListItems;
                 comboBoxVagonNumber.SelectedIndex = -1;
+                comboBoxVagonNumber.Text = string.Empty;
             }
             finally
             {
@@ -676,8 +870,13 @@ namespace PromVesClient
             }
         }
 
+        // Данный метод оставлен для совместимости, но основная логика выбора вагона
+        // уже вынесена в обработчики выше.
+
         private async void comboBoxVagonNumber_SelectedIndexChanged_1(object sender, EventArgs e)
         {
+            UpdateWeighingButtonState();
+
             if (_isLoadingVagons)
                 return;
 
@@ -686,7 +885,7 @@ namespace PromVesClient
 
             string vagonNumber = comboBoxVagonNumber.Text.Trim();
 
-            if (vagonNumber.Length != 8)
+            if (string.IsNullOrWhiteSpace(vagonNumber))
                 return;
 
             var result = await _staticWeighingService
@@ -702,6 +901,8 @@ namespace PromVesClient
 
             txtLoadCapacity.Text =
                 result.Data.LoadCapacity.ToString("0.##");
+            //ставим тип взвешивания брутто
+            cBoxTypeWeighing.SelectedIndex = 1;
         }
     }
 }

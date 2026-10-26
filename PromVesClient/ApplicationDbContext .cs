@@ -12,10 +12,11 @@ namespace PromVesClient
         : base(options)
         {
         }
-
         public DbSet<User> Users => Set<User>();
         public DbSet<Receipt> Receipts => Set<Receipt>();
         public DbSet<Weighing> Weighings => Set<Weighing>();
+
+        public DbSet<Wagon> Wagons => Set<Wagon>();
         //настрйока каскадного удаления
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

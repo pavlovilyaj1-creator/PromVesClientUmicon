@@ -39,6 +39,7 @@
             ServiceToolStrip = new ToolStripMenuItem();
             ComSetitem = new ToolStripMenuItem();
             label1 = new Label();
+            справочникВагоновToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -107,7 +108,7 @@
             // 
             // ServiceToolStrip
             // 
-            ServiceToolStrip.DropDownItems.AddRange(new ToolStripItem[] { ComSetitem });
+            ServiceToolStrip.DropDownItems.AddRange(new ToolStripItem[] { ComSetitem, справочникВагоновToolStripMenuItem });
             ServiceToolStrip.Name = "ServiceToolStrip";
             ServiceToolStrip.Size = new Size(59, 20);
             ServiceToolStrip.Text = "Сервис";
@@ -115,7 +116,7 @@
             // ComSetitem
             // 
             ComSetitem.Name = "ComSetitem";
-            ComSetitem.Size = new Size(120, 22);
+            ComSetitem.Size = new Size(189, 22);
             ComSetitem.Text = "Наладка";
             ComSetitem.Click += ComSetitem_Click;
             // 
@@ -128,6 +129,13 @@
             label1.TabIndex = 4;
             label1.Text = "label1";
             label1.Visible = false;
+            // 
+            // справочникВагоновToolStripMenuItem
+            // 
+            справочникВагоновToolStripMenuItem.Name = "справочникВагоновToolStripMenuItem";
+            справочникВагоновToolStripMenuItem.Size = new Size(189, 22);
+            справочникВагоновToolStripMenuItem.Text = "Справочник вагонов";
+            справочникВагоновToolStripMenuItem.Click += справочникВагоновToolStripMenuItem_Click;
             // 
             // MainMenu
             // 
@@ -162,5 +170,6 @@
         private ToolStripMenuItem ServiceToolStrip;
         private ToolStripMenuItem ComSetitem;
         private Label label1;
+        private ToolStripMenuItem справочникВагоновToolStripMenuItem;
     }
 }

@@ -24,7 +24,7 @@ namespace PromVesClient
                 menuStrip1.Enabled = false;
             }
             //     label1.Text =
-       //$"Пользователь: {_currentUserService.CurrentUser?.Name}";
+            //$"Пользователь: {_currentUserService.CurrentUser?.Name}";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -69,6 +69,13 @@ namespace PromVesClient
         private void MainMenu_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void справочникВагоновToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = _serviceProvider.GetRequiredService<WagonForm>();
+
+            form.ShowDialog();
         }
     }
 }

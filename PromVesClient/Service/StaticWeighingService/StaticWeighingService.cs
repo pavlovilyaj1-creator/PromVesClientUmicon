@@ -288,20 +288,22 @@ namespace PromVesClient.Service.StaticWeighingService
             return images;
         }
 
-        //получение списка всех вагонов
+        // Получаем список вагонов из таблицы Wagon, а не из истории взвешиваний.
+        // В модели Wagon хранится стабильный справочник: номер, тара и грузоподъёмность.
         public async Task<ServiceResult<List<VagonNumberDTO>>> GetVagonsNumbersAsync()
         {
             try
             {
-                var vagonsNumber = await _dbContext.Weighings
-                .Select(w => w.VagonNumber)
-                .Distinct()
-                .Select(v => new VagonNumberDTO
-                {
-                    VagonNumber = v
-                })
-                .ToListAsync();
-                //отправляем данные
+                var vagonsNumber = await _dbContext.Wagons
+                    .Where(w => w.IsActive)
+                    .OrderBy(w => w.Number)
+                    .Select(w => new VagonNumberDTO
+                    {
+                        VagonNumber = w.Number
+                    })
+                    .ToListAsync();
+
+                // Отправляем список номеров для заполнения comboBoxVagonNumber.
                 return new ServiceResult<List<VagonNumberDTO>>
                 {
                     Success = true,
@@ -310,7 +312,7 @@ namespace PromVesClient.Service.StaticWeighingService
             }
             catch (TimeoutException ex)
             {
-                _logger.LogError("Привышенно время ожидания ответа: " + ex.Message);
+                _logger.LogError("Превышено время ожидания ответа: " + ex.Message);
                 return ServiceResult<List<VagonNumberDTO>>.Fail("БД не отвечает, причина: " + ex.Message);
             }
             catch (NpgsqlException ex)
@@ -325,21 +327,20 @@ namespace PromVesClient.Service.StaticWeighingService
             }
         }
 
-        //метод получения последней записи по номеру вагона
+        // Получаем данные вагона из справочника Wagon, потому что именно там хранится
+        // актуальная тара и грузоподъёмность по номеру вагона.
         public async Task<ServiceResult<VagonLastDataDto>> GetLastVagonDataAsync(string vagonNumber)
         {
             try
             {
-                var lastWeighing = await _dbContext.Weighings
-                    .Include(w => w.Receipt)
-                    .Where(w => w.VagonNumber == vagonNumber)
-                    .OrderByDescending(w => w.Receipt.DateTime)
+                var wagon = await _dbContext.Wagons
+                    .Where(w => w.Number == vagonNumber && w.IsActive)
                     .FirstOrDefaultAsync();
 
-                if (lastWeighing == null)
+                if (wagon == null)
                 {
                     return ServiceResult<VagonLastDataDto>.Fail(
-                        "Для данного вагона нет предыдущих взвешиваний.");
+                        "Для данного вагона не найден справочник с данными.");
                 }
 
                 return new ServiceResult<VagonLastDataDto>
@@ -347,8 +348,8 @@ namespace PromVesClient.Service.StaticWeighingService
                     Success = true,
                     Data = new VagonLastDataDto
                     {
-                        TareWeight = lastWeighing.TareWeight,
-                        LoadCapacity = lastWeighing.LoadCapacity
+                        TareWeight = wagon.TareWeight,
+                        LoadCapacity = wagon.LoadCapacity
                     }
                 };
             }
@@ -363,6 +364,9 @@ namespace PromVesClient.Service.StaticWeighingService
                     "Ошибка получения данных вагона: " + ex.Message);
             }
         }
+
+        // TODO: если в будущем потребуется брать данные из истории записи Weighings,
+        // это будет отдельный метод, но сейчас основным источником является модель Wagon.
 
         //получение локального ip адреса компьютера
         public async Task<IPAddress> GetLocalIPAddressAsync()
