@@ -213,6 +213,7 @@
             comboBoxVagonNumber.Size = new Size(142, 25);
             comboBoxVagonNumber.TabIndex = 19;
             comboBoxVagonNumber.SelectedIndexChanged += comboBoxVagonNumber_SelectedIndexChanged_1;
+            comboBoxVagonNumber.TextUpdate += comboBoxVagonNumber_TextUpdate;
             // 
             // label4
             // 

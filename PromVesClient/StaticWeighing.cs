@@ -904,5 +904,10 @@ namespace PromVesClient
             //ставим тип взвешивания брутто
             cBoxTypeWeighing.SelectedIndex = 1;
         }
+
+        private void comboBoxVagonNumber_TextUpdate(object sender, EventArgs e)
+        {
+            btnWeighing.Enabled = false;
+        }
     }
 }
