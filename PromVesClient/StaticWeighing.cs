@@ -386,6 +386,7 @@ namespace PromVesClient
                 //MessageBox.Show("Соединение закрыто");
                 graphTimer.Stop();
                 btnWeighing.Text = "Начать взвешивание";
+                btnSaveWeight.Enabled = false;
                 UpdateWeighingButtonState();
             }
         }
